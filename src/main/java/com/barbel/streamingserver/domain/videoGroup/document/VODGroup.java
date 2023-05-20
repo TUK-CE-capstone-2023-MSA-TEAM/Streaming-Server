@@ -1,0 +1,20 @@
+package com.barbel.streamingserver.domain.videoGroup.document;
+
+import java.util.List;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Document(collection = "video_group")
+public class VODGroup {
+  @Id
+  private String _id;
+  private String ownerId;       // 소유자 ID
+  private String vodGroupName;  // VOD 그룹 이름 (인강 시리즈 제목)
+  private String vodCount;      // VOD 그룹에 포함된 VOD 갯수
+  private List<VOD> VODList;   // VOD 리스트
+}
