@@ -2,7 +2,7 @@ package com.barbel.streamingserver.global.error;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
-import com.barbel.memberserver.global.error.exception.BusinessException;
+import com.barbel.streamingserver.global.error.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

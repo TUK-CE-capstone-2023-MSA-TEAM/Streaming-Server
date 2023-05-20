@@ -1,6 +1,6 @@
 package com.barbel.streamingserver.global.error.exception;
 
-import com.barbel.memberserver.global.error.ErrorCode;
+import com.barbel.streamingserver.global.error.ErrorCode;
 import lombok.Getter;
 
 @Getter
