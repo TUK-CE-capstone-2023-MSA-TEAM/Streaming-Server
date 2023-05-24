@@ -33,7 +33,7 @@ dependencies {
     implementation 'org.mongodb:mongodb-driver-legacy:4.2.3'
 
     //security
-    implementation 'org.springframework.boot:spring-boot-starter-security'
+//    implementation 'org.springframework.boot:spring-boot-starter-security'
 
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.7.7'
 
