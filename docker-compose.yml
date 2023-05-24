@@ -4,7 +4,7 @@ services:
   db:
     image: mongo:4.2.3
     restart: always
-    container_name: mongoDB
+    container_name: mongoDB_streaming
     ports:
       - "27016:27017"
     env_file: .env
