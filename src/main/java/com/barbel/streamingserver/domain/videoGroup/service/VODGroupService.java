@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,13 +25,14 @@ public class VODGroupService {
 
   /**
    *
-   * @param vodGroupRegistrationRequestDto
+   * @param vodGroupRegistrationRequestDto, thumbnail
    * @return ResultResponse
    * @description VOD 그룹을 생성하는 서비스
    * @since 2023. 05. 24.
    */
   public ResultResponse makeNewVODGroup(
-    VODGroupRegistrationRequestDto vodGroupRegistrationRequestDto
+    VODGroupRegistrationRequestDto vodGroupRegistrationRequestDto,
+    MultipartFile thumbnail
   ) {
     //TODO: 썸네일 이미지 받아서 업로드 후 URL 받아 저장하는 코드 추가
     VODGroup vodGroup = VODGroup.builder()
