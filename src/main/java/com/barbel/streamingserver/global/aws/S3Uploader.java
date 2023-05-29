@@ -87,6 +87,7 @@ public class S3Uploader {
   public String initMultipartUpload(String key) {
     InitiateMultipartUploadResult result =  amazonS3Client.initiateMultipartUpload(new InitiateMultipartUploadRequest(bucket, key));
     //TODO: 리턴 형식 맞춰서 구현 코드 추가
+    return null;
   }
 
   private void deleteS3(String fileName) {
