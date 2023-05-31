@@ -5,6 +5,9 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.barbel.streamingserver.domain.videoGroup.dto.MultipartInitResponseDto;
+import com.barbel.streamingserver.domain.videoGroup.dto.MultipartUploadRequestDto;
+import com.barbel.streamingserver.domain.videoGroup.dto.MultipartUploadResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +31,28 @@ public class S3Uploader {
   public String uploadImage(MultipartFile multipartFile, String dirName)  {
     File uploadFile = convert(multipartFile);
     return upload(uploadFile, dirName);
+  }
+
+  public void deleteImage(String imgName, String dirName) {
+    if(imgName.equals(BASE_IMG_NAME)) {
+      return;
+    }
+    final String fileName = convertToFilename(imgName, dirName);
+    deleteS3(fileName);
+  }
+
+  public MultipartInitResponseDto initMultipartUpload(String key) { // key는 업로드 파일 경로 + 이름
+    InitiateMultipartUploadResult result =
+            amazonS3Client.initiateMultipartUpload(new InitiateMultipartUploadRequest(bucket, key));
+    return new MultipartInitResponseDto(
+            result.getUploadId(),
+            amazonS3Client.getUrl(bucket, key).toString()
+    );
+  }
+
+  public MultipartUploadResponseDto multipartUpload(MultipartUploadRequestDto multipartUploadRequestDto) {
+    //TODO: 멀티파트 업로드 구현
+    return null;
   }
 
   private String upload(File file, String dirName) {
@@ -54,8 +79,8 @@ public class S3Uploader {
 
   private String putS3(File file, String fileName) {
     amazonS3Client.putObject(
-        new PutObjectRequest(bucket, fileName, file)
-            .withCannedAcl(CannedAccessControlList.PublicRead)
+            new PutObjectRequest(bucket, fileName, file)
+                    .withCannedAcl(CannedAccessControlList.PublicRead)
     );
     return amazonS3Client.getUrl(bucket, fileName).toString();
   }
@@ -74,20 +99,6 @@ public class S3Uploader {
     } catch (IOException e) {
       throw new IllegalArgumentException("MultipartFile -> File convert fail", e);
     }
-  }
-
-  public void deleteImage(String imgName, String dirName) {
-    if(imgName.equals(BASE_IMG_NAME)) {
-      return;
-    }
-    final String fileName = convertToFilename(imgName, dirName);
-    deleteS3(fileName);
-  }
-
-  public String initMultipartUpload(String key) {
-    InitiateMultipartUploadResult result =  amazonS3Client.initiateMultipartUpload(new InitiateMultipartUploadRequest(bucket, key));
-    //TODO: 리턴 형식 맞춰서 구현 코드 추가
-    return null;
   }
 
   private void deleteS3(String fileName) {
