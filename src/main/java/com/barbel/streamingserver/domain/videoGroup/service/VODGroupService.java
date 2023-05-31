@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,11 +27,11 @@ public class VODGroupService {
   /**
    *
    * @param vodGroupRegistrationRequestDto, thumbnail
-   * @return ResultResponse
+   * @return ResponseEntity<ResultResponse>
    * @description VOD 그룹을 생성하는 서비스
    * @since 2023. 05. 24.
    */
-  public ResultResponse makeNewVODGroup(
+  public ResponseEntity<ResultResponse> makeNewVODGroup(
     VODGroupRegistrationRequestDto vodGroupRegistrationRequestDto,
     MultipartFile thumbnail
   ) {
@@ -42,34 +43,34 @@ public class VODGroupService {
         .VODList(new ArrayList<>())
         .build();
     vodGroupRepository.save(vodGroup);
-    return ResultResponse.of(ResultCode.VODGROUP_REGISTRATION_SUCCESS);
+    return ResponseEntity.ok(ResultResponse.of(ResultCode.VODGROUP_REGISTRATION_SUCCESS));
   }
 
   /**
    *
    * @param vodGroupNameUpdateRequestDto
-   * @return ResultResponse
+   * @return ResponseEntity<ResultResponse>
    * @description VOD 그룹 이름을 변경하는 서비스
    * @since 2023. 05. 24.
    */
-  public ResultResponse updateVODGroupName(
+  public ResponseEntity<ResultResponse> updateVODGroupName(
       VODGroupNameUpdateRequestDto vodGroupNameUpdateRequestDto
   ) {
     VODGroup vodGroup = vodGroupRepository.findById(vodGroupNameUpdateRequestDto.getVodGroupId())
         .orElseThrow(VODGroupNotFoundException::new);
     vodGroup.setVodGroupName(vodGroupNameUpdateRequestDto.getVodGroupName());
     vodGroupRepository.save(vodGroup);
-    return ResultResponse.of(ResultCode.VODGROUP_UPDATE_SUCCESS);
+    return ResponseEntity.ok(ResultResponse.of(ResultCode.VODGROUP_UPDATE_SUCCESS));
   }
 
   /**
    *
    * @param OwnerId
-   * @return ResultResponse
+   * @return ResponseEntity<ResultResponse>
    * @description 소유자 ID를 통해 VOD 그룹 리스트를 가져오는 서비스
    * @since 2023. 05. 24.
    */
-  public ResultResponse getVODGroupOfUser(
+  public ResponseEntity<ResultResponse> getVODGroupOfUser(
       String OwnerId
   ) {
     List<VODGroupInfoResponseDto> vodGroupList = vodGroupRepository.findAllByOwnerId(OwnerId).stream().map(
@@ -81,17 +82,17 @@ public class VODGroupService {
             .build()
     ).collect(Collectors.toList());
 
-    return ResultResponse.of(ResultCode.VODGROUP_SEARCH_SUCCESS, vodGroupList);
+    return ResponseEntity.ok(ResultResponse.of(ResultCode.VODGROUP_SEARCH_SUCCESS, vodGroupList));
   }
 
   /**
    *
    * @param vodGroupId
-   * @return ResultResponse
+   * @return ResponseEntity<ResultResponse>
    * @description VOD 그룹 ID를 통해 VOD 그룹 디테일을 가져오는 서비스
    * @since 2023. 05. 24.
    */
-  public ResultResponse getVODGroupById(
+  public ResponseEntity<ResultResponse> getVODGroupById(
       String vodGroupId
   ) {
     VODGroup vodGroup = vodGroupRepository.findById(vodGroupId)
@@ -103,6 +104,6 @@ public class VODGroupService {
         .vodCount(vodGroup.getVodCount())
         .VODList(vodGroup.getVODList())
         .build();
-    return ResultResponse.of(ResultCode.VODGROUP_SEARCH_SUCCESS, result);
+    return ResponseEntity.ok(ResultResponse.of(ResultCode.VODGROUP_SEARCH_SUCCESS, result));
   }
 }
