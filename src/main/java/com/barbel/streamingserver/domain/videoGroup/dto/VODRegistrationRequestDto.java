@@ -6,5 +6,6 @@ import lombok.Data;
 public class VODRegistrationRequestDto {
     private String title;
     private String description;
-    private String ownerId;
+    private String VODGroupId;
+    private int vodIndex;
 }
