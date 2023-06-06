@@ -1,4 +1,4 @@
-package com.barbel.streamingserver.domain.videoGroup.dto;
+package com.barbel.streamingserver.global.aws.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,8 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class MultipartUploadRequestDto {
     private String uploadId;
     private int totalPart;
-    private int partIndex;
-    private MultipartFile file;
+    private int multipartIndex;
     private String VODGroupId;
     private int vodIndex;
 }

@@ -1,4 +1,4 @@
-package com.barbel.streamingserver.domain.videoGroup.dto;
+package com.barbel.streamingserver.global.aws.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
