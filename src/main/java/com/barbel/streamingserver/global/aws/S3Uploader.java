@@ -5,9 +5,11 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.barbel.streamingserver.domain.videoGroup.dto.MultipartInitResponseDto;
-import com.barbel.streamingserver.domain.videoGroup.dto.MultipartUploadRequestDto;
-import com.barbel.streamingserver.domain.videoGroup.dto.MultipartUploadResponseDto;
+import com.amazonaws.services.s3.model.UploadPartRequest;
+import com.amazonaws.services.s3.model.UploadPartResult;
+import com.barbel.streamingserver.global.aws.dto.MultipartInitResponseDto;
+import com.barbel.streamingserver.global.aws.dto.MultipartUploadRequestDto;
+import com.barbel.streamingserver.global.aws.dto.MultipartUploadResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,10 +52,33 @@ public class S3Uploader {
     );
   }
 
-  public MultipartUploadResponseDto multipartUpload(MultipartUploadRequestDto multipartUploadRequestDto) {
-    //TODO: 멀티파트 업로드 구현
-    return null;
+  public MultipartUploadResponseDto multipartUpload(
+      MultipartUploadRequestDto multipartUploadRequestDto,
+      String key,
+      MultipartFile file) {
+    try {
+      UploadPartResult result = amazonS3Client.uploadPart(
+          new UploadPartRequest()
+              .withBucketName(bucket)
+              .withUploadId(multipartUploadRequestDto.getUploadId())
+              .withKey(key)
+              .withPartNumber(multipartUploadRequestDto.getMultipartIndex())
+              .withInputStream(file.getInputStream())
+              .withPartSize(file.getSize())
+      );
+      return new MultipartUploadResponseDto(
+          result.getPartETag()
+      );
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return MultipartUploadResponseDto.empty();
   }
+
+  public void completeMultipartUpload(String uploadId) {
+
+  }
+
 
   private String upload(File file, String dirName) {
     String fileName = convertToFilename(file.getName(), dirName);
