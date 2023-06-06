@@ -17,6 +17,9 @@ public enum ErrorCode {
   //VODGroup
   VODGROUP_NOT_FOUND(404, "V001", "VOD 그룹을 찾을 수 없습니다."),
 
+  //VOD
+  VOD_NOT_FOUND(404, "V002", "VOD를 찾을 수 없습니다."),
+
   ;
 
   private final int status;
