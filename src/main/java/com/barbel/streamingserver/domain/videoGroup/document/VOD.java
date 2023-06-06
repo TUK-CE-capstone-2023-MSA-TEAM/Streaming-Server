@@ -12,5 +12,6 @@ public class VOD {
   private String description;   // VOD 설명
   private String vodURL;        // VOD 스토리지 URL
   private String thumbnailURL;  // VOD 썸네일 스토리지 URL
+  private String key;           // 저장된 스토리지 경로
 //  private int vodLength;        // VOD 길이 (초)
 }
