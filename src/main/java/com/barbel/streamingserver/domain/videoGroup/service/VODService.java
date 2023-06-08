@@ -3,6 +3,7 @@ package com.barbel.streamingserver.domain.videoGroup.service;
 import com.barbel.streamingserver.domain.videoGroup.document.VOD;
 import com.barbel.streamingserver.domain.videoGroup.document.VODGroup;
 import com.barbel.streamingserver.domain.videoGroup.exception.VODNotFoundException;
+import com.barbel.streamingserver.global.aws.dto.FinishUploadMultipartRequestDto;
 import com.barbel.streamingserver.global.aws.dto.MultipartInitResponseDto;
 import com.barbel.streamingserver.global.aws.dto.MultipartUploadRequestDto;
 import com.barbel.streamingserver.global.aws.dto.MultipartUploadResponseDto;
@@ -75,12 +76,18 @@ public class VODService {
             MultipartFile file
     ) {
         log.info("동영상 파일 업로드 시작");
-        VODGroup vodGroup = vodGroupRepository.findById(multipartUploadRequestDto.getVODGroupId()).orElseThrow(VODGroupNotFoundException::new);
-        List<VOD> vodList = vodGroup.getVODList();
-        VOD vod = vodList.stream().filter(v -> v.getIdx() == multipartUploadRequestDto.getVodIndex())
-            .findFirst().orElseThrow(VODNotFoundException::new);
-        MultipartUploadResponseDto response = s3Uploader.multipartUpload(multipartUploadRequestDto, vod.getKey(), file);
+        String key = getKeyOfVOD(multipartUploadRequestDto.getVODGroupId(), multipartUploadRequestDto.getVodIndex());
+        MultipartUploadResponseDto response = s3Uploader.multipartUpload(multipartUploadRequestDto, key, file);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.VOD_MULTIPART_UPLOAD_SUCCESS, response));
+    }
+
+    public ResponseEntity<ResultResponse> finishUploadMultipart(
+            FinishUploadMultipartRequestDto finishUploadMultipartRequestDto
+    ) {
+        String key = getKeyOfVOD(finishUploadMultipartRequestDto.getVODGroupId(), finishUploadMultipartRequestDto.getVodIndex());
+        s3Uploader.finishMultipartUpload(finishUploadMultipartRequestDto, key);
+
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.VOD_UPLOAD_FINISH_SUCCESS));
     }
 
     /**
@@ -93,6 +100,14 @@ public class VODService {
             VODTitleUpdateRequestDto vodTitleUpdateRequestDto
     ) {
         return null;
+    }
+
+    private String getKeyOfVOD(String vodGroupId, int vodIndex) {
+        VODGroup vodGroup = vodGroupRepository.findById(vodGroupId).orElseThrow(VODGroupNotFoundException::new);
+        List<VOD> vodList = vodGroup.getVODList();
+        VOD vod = vodList.stream().filter(v -> v.getIdx() == vodIndex)
+            .findFirst().orElseThrow(VODNotFoundException::new);
+        return vod.getKey();
     }
 
 }
