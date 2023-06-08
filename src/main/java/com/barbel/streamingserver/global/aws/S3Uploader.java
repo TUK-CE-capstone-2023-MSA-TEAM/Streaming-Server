@@ -2,11 +2,13 @@ package com.barbel.streamingserver.global.aws;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.CompleteMultipartUploadRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.UploadPartRequest;
 import com.amazonaws.services.s3.model.UploadPartResult;
+import com.barbel.streamingserver.global.aws.dto.FinishUploadMultipartRequestDto;
 import com.barbel.streamingserver.global.aws.dto.MultipartInitResponseDto;
 import com.barbel.streamingserver.global.aws.dto.MultipartUploadRequestDto;
 import com.barbel.streamingserver.global.aws.dto.MultipartUploadResponseDto;
@@ -75,8 +77,18 @@ public class S3Uploader {
     return MultipartUploadResponseDto.empty();
   }
 
-  public void completeMultipartUpload(String uploadId) {
-
+  public void finishMultipartUpload(
+      FinishUploadMultipartRequestDto finishUploadMultipartRequestDto,
+      String key
+  ) {
+    amazonS3Client.completeMultipartUpload(
+        new CompleteMultipartUploadRequest(
+            bucket,
+            key,
+            finishUploadMultipartRequestDto.getUploadId(),
+            finishUploadMultipartRequestDto.deserializePartEtagToS3PartETagClass()
+        )
+    );
   }
 
 
