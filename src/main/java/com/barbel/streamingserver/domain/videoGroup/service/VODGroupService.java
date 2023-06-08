@@ -25,7 +25,6 @@ public class VODGroupService {
   private final VODGroupRepository vodGroupRepository;
 
   /**
-   *
    * @param vodGroupRegistrationRequestDto, thumbnail
    * @return ResponseEntity<ResultResponse>
    * @description VOD 그룹을 생성하는 서비스
@@ -47,13 +46,12 @@ public class VODGroupService {
   }
 
   /**
-   *
    * @param vodGroupNameUpdateRequestDto
    * @return ResponseEntity<ResultResponse>
    * @description VOD 그룹 이름을 변경하는 서비스
    * @since 2023. 05. 24.
    */
-  public ResponseEntity<ResultResponse> updateVODGroupName(
+  public ResponseEntity<ResultResponse> updateVODGroupTitle(
       VODGroupNameUpdateRequestDto vodGroupNameUpdateRequestDto
   ) {
     VODGroup vodGroup = vodGroupRepository.findById(vodGroupNameUpdateRequestDto.getVodGroupId())
@@ -64,7 +62,6 @@ public class VODGroupService {
   }
 
   /**
-   *
    * @param OwnerId
    * @return ResponseEntity<ResultResponse>
    * @description 소유자 ID를 통해 VOD 그룹 리스트를 가져오는 서비스
@@ -86,13 +83,12 @@ public class VODGroupService {
   }
 
   /**
-   *
    * @param vodGroupId
    * @return ResponseEntity<ResultResponse>
    * @description VOD 그룹 ID를 통해 VOD 그룹 디테일을 가져오는 서비스
    * @since 2023. 05. 24.
    */
-  public ResponseEntity<ResultResponse> getVODGroupById(
+  public ResponseEntity<ResultResponse> getVODGroupDetailById(
       String vodGroupId
   ) {
     VODGroup vodGroup = vodGroupRepository.findById(vodGroupId)
@@ -105,5 +101,24 @@ public class VODGroupService {
         .VODList(vodGroup.getVODList())
         .build();
     return ResponseEntity.ok(ResultResponse.of(ResultCode.VODGROUP_SEARCH_SUCCESS, result));
+  }
+
+  /**
+   * @param
+   * @return ResponseEntity<ResultResponse>
+   * @description 모든 VOD 그룹 리스트를 가져오는 서비스
+   * @since 2023. 06. 08.
+   */
+  public ResponseEntity<ResultResponse> getAllVODGroups() {
+    List<VODGroupInfoResponseDto> vodGroupList = vodGroupRepository.findAll().stream().map(
+        vodGroup -> VODGroupInfoResponseDto.builder()
+            .id(vodGroup.get_id())
+            .vodGroupName(vodGroup.getVodGroupName())
+            .thumbnailURL(vodGroup.getThumbnailURL())
+            .vodCount(vodGroup.getVodCount())
+            .build()
+    ).collect(Collectors.toList());
+
+    return ResponseEntity.ok(ResultResponse.of(ResultCode.VODGROUP_SEARCH_SUCCESS, vodGroupList));
   }
 }
