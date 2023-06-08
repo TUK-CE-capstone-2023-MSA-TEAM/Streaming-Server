@@ -21,6 +21,7 @@ public enum ResultCode {
   VOD_REGISTRATION_INIT_SUCCESS("V006", "VOD 등록 초기화 성공"),
   VOD_MULTIPART_UPLOAD_SUCCESS("V007", "VOD 멀티파트 업로드 성공"),
   VOD_UPLOAD_COMPLATE("V007", "VOD 업로드 완료"),
+  VOD_UPLOAD_FINISH_SUCCESS("V008", "VOD 업로드 완료 요청 성공"),
 
   ;
 
