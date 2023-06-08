@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class VODTitleUpdateRequestDto {
-    private String id;
-    private String title;
+    private String vodGroupId;
+    private int vodIndex;
+    private String newTitle;
 }
