@@ -75,17 +75,22 @@ public class VODService {
             MultipartUploadRequestDto multipartUploadRequestDto,
             MultipartFile file
     ) {
-        log.info("동영상 파일 업로드 시작");
-        String key = getKeyOfVOD(multipartUploadRequestDto.getVODGroupId(), multipartUploadRequestDto.getVodIndex());
-        MultipartUploadResponseDto response = s3Uploader.multipartUpload(multipartUploadRequestDto, key, file);
+        VOD vod = getVOD(multipartUploadRequestDto.getVODGroupId(), multipartUploadRequestDto.getVodIndex());
+        MultipartUploadResponseDto response = s3Uploader.multipartUpload(multipartUploadRequestDto, vod.getKey(), file);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.VOD_MULTIPART_UPLOAD_SUCCESS, response));
     }
 
+    /**
+     * @param finishUploadMultipartRequestDto
+     * @return ResponseEntity<ResultResponse>
+     * @description Multipart 업로드 완료 서비스
+     * @since 2023. 05. 26.
+     */
     public ResponseEntity<ResultResponse> finishUploadMultipart(
             FinishUploadMultipartRequestDto finishUploadMultipartRequestDto
     ) {
-        String key = getKeyOfVOD(finishUploadMultipartRequestDto.getVODGroupId(), finishUploadMultipartRequestDto.getVodIndex());
-        s3Uploader.finishMultipartUpload(finishUploadMultipartRequestDto, key);
+        VOD vod = getVOD(finishUploadMultipartRequestDto.getVODGroupId(), finishUploadMultipartRequestDto.getVodIndex());
+        s3Uploader.finishMultipartUpload(finishUploadMultipartRequestDto, vod.getKey());
 
         return ResponseEntity.ok(ResultResponse.of(ResultCode.VOD_UPLOAD_FINISH_SUCCESS));
     }
@@ -99,15 +104,16 @@ public class VODService {
     public ResponseEntity<ResultResponse> updateVODTitle(
             VODTitleUpdateRequestDto vodTitleUpdateRequestDto
     ) {
-        return null;
+        VOD vod = getVOD(vodTitleUpdateRequestDto.getVodGroupId(), vodTitleUpdateRequestDto.getVodIndex());
+        vod.setTitle(vodTitleUpdateRequestDto.getNewTitle());
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.VODGROUP_UPDATE_SUCCESS));
     }
 
-    private String getKeyOfVOD(String vodGroupId, int vodIndex) {
+    private VOD getVOD(String vodGroupId, int vodIndex) {
         VODGroup vodGroup = vodGroupRepository.findById(vodGroupId).orElseThrow(VODGroupNotFoundException::new);
         List<VOD> vodList = vodGroup.getVODList();
-        VOD vod = vodList.stream().filter(v -> v.getIdx() == vodIndex)
+        return vodList.stream().filter(v -> v.getIdx() == vodIndex)
             .findFirst().orElseThrow(VODNotFoundException::new);
-        return vod.getKey();
     }
 
 }
