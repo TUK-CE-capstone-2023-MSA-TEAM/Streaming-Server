@@ -18,7 +18,7 @@ import java.util.Set;
 public class SwaggerConfig {
 
   private ApiInfo swaggerInfo() {
-    return new ApiInfoBuilder().title("BARBELTEAM-Member-Server").description("Member API Docs").build();
+    return new ApiInfoBuilder().title("BARBELTEAM-Streaming-Server").description("Streaming API Docs").build();
   }
 
   @Bean
@@ -28,7 +28,7 @@ public class SwaggerConfig {
         .produces(getProduceContentTypes())
         .apiInfo(swaggerInfo())
         .select()
-        .apis(RequestHandlerSelectors.basePackage("com.barbel.memberserver"))
+        .apis(RequestHandlerSelectors.basePackage("com.barbel.streamingserver"))
         .paths(PathSelectors.any())
         .build()
         .useDefaultResponseMessages(false);
