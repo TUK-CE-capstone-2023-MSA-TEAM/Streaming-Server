@@ -8,6 +8,7 @@ import com.barbel.streamingserver.domain.videoGroup.dto.VODGroupNameUpdateReques
 import com.barbel.streamingserver.domain.videoGroup.dto.VODGroupRegistrationRequestDto;
 import com.barbel.streamingserver.domain.videoGroup.exception.VODGroupNotFoundException;
 import com.barbel.streamingserver.domain.videoGroup.repository.VODGroupRepository;
+import com.barbel.streamingserver.global.aws.S3Uploader;
 import com.barbel.streamingserver.global.result.ResultCode;
 import com.barbel.streamingserver.global.result.ResultResponse;
 import java.util.ArrayList;
@@ -23,6 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class VODGroupService {
   private final VODGroupRepository vodGroupRepository;
+  private final S3Uploader s3Uploader;
+
+  private final String S3_DIR_NAME = "streaming/vodGroup/thumbnail";
 
   /**
    * @param vodGroupRegistrationRequestDto, thumbnail
@@ -34,12 +38,13 @@ public class VODGroupService {
     VODGroupRegistrationRequestDto vodGroupRegistrationRequestDto,
     MultipartFile thumbnail
   ) {
-    //TODO: 썸네일 이미지 받아서 업로드 후 URL 받아 저장하는 코드 추가
+    String thumbnailURL = s3Uploader.uploadImage(thumbnail, S3_DIR_NAME);
     VODGroup vodGroup = VODGroup.builder()
         .vodGroupName(vodGroupRegistrationRequestDto.getVodGroupName())
         .ownerId(vodGroupRegistrationRequestDto.getOwnerId())
         .vodCount(0)
         .VODList(new ArrayList<>())
+        .thumbnailURL(thumbnailURL)
         .build();
     vodGroupRepository.save(vodGroup);
     return ResponseEntity.ok(ResultResponse.of(ResultCode.VODGROUP_REGISTRATION_SUCCESS));
