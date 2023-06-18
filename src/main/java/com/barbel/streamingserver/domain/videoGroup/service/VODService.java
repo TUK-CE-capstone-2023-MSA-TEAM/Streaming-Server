@@ -30,7 +30,7 @@ import java.util.List;
 public class VODService {
     private final VODGroupRepository vodGroupRepository;
     private final S3Uploader s3Uploader;
-    private final String S3_DIR_NAME = "/vod/";
+    private final String S3_DIR_NAME = "streaming/vod/";
 
     /**
      * @param vodRegistrationRequestDto, thumbnail
@@ -44,14 +44,15 @@ public class VODService {
             MultipartFile thumbnail
     ) {
         log.info("동영상 파일 업로드 초기화 시작");
-        String thumbURL = s3Uploader.uploadImage(thumbnail, S3_DIR_NAME+vodRegistrationRequestDto.getVODGroupId());
+        String thumbURL = s3Uploader.uploadImage(thumbnail, S3_DIR_NAME+vodRegistrationRequestDto.getVODGroupId()+"/thumbnail");
         String key = S3_DIR_NAME+vodRegistrationRequestDto.getVODGroupId();
         MultipartInitResponseDto multipartInitResponseDto = s3Uploader.initMultipartUpload(key);
         String[] vodInfo = vodRegistrationRequestDto.getTitle().split(".");
         VOD vod = new VOD(
                 vodRegistrationRequestDto.getVodIndex(),
-                vodInfo[0],
-                vodInfo[1],
+                vodRegistrationRequestDto.getTitle(),
+//                vodInfo[0],
+//                vodInfo[1],
                 vodRegistrationRequestDto.getDescription(),
                 multipartInitResponseDto.getURL(),
                 thumbURL,
@@ -62,6 +63,7 @@ public class VODService {
         List<VOD> vodList = vodGroup.getVODList();
         vodList.add(vod);
         vodGroup.setVODList(vodList);
+        vodGroupRepository.save(vodGroup);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.VOD_REGISTRATION_INIT_SUCCESS, multipartInitResponseDto.getUploadId()));
     }
 
@@ -75,7 +77,7 @@ public class VODService {
             MultipartUploadRequestDto multipartUploadRequestDto,
             MultipartFile file
     ) {
-        VOD vod = getVOD(multipartUploadRequestDto.getVODGroupId(), multipartUploadRequestDto.getVodIndex());
+        VOD vod = getVOD(multipartUploadRequestDto.getVodGroupId(), multipartUploadRequestDto.getVodIndex());
         MultipartUploadResponseDto response = s3Uploader.multipartUpload(multipartUploadRequestDto, vod.getKey(), file);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.VOD_MULTIPART_UPLOAD_SUCCESS, response));
     }
