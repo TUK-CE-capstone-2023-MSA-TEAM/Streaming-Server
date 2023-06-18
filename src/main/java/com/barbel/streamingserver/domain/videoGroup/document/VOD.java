@@ -8,7 +8,7 @@ import lombok.Data;
 public class VOD {
   private int idx;
   private String title;       // VOD 제목
-  private String vodType;       // VOD 동영상 파일 확장자
+//  private String vodType;       // VOD 동영상 파일 확장자
   private String description;   // VOD 설명
   private String vodURL;        // VOD 스토리지 URL
   private String thumbnailURL;  // VOD 썸네일 스토리지 URL
