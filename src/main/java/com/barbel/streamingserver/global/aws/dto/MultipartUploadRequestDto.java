@@ -1,15 +1,17 @@
 package com.barbel.streamingserver.global.aws.dto;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @AllArgsConstructor
+@JsonAutoDetect(fieldVisibility = Visibility.ANY)
 public class MultipartUploadRequestDto {
     private String uploadId;
     private int totalPart;
     private int multipartIndex;
-    private String VODGroupId;
+    private String vodGroupId;
     private int vodIndex;
 }
