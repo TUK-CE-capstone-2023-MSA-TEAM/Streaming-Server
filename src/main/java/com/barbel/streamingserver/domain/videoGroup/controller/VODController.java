@@ -24,7 +24,7 @@ public class VODController {
   private final VODService vodService;
 
   @PostMapping("/registration")
-  @Operation(summary = "VOD 멀티파트 등록 요청")
+  @Operation(summary = "VOD 멀티파트 등록 요청(VOD 등록 요청)")
   public ResponseEntity<ResultResponse> registerVOD(
       @RequestPart("data")VODRegistrationRequestDto vodRegistrationRequestDto,
       @RequestPart("thumbnail") MultipartFile thumbnail
