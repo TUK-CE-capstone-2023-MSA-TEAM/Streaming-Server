@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.CompleteMultipartUploadRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.UploadPartRequest;
 import com.amazonaws.services.s3.model.UploadPartResult;
@@ -12,6 +13,7 @@ import com.barbel.streamingserver.global.aws.dto.FinishUploadMultipartRequestDto
 import com.barbel.streamingserver.global.aws.dto.MultipartInitResponseDto;
 import com.barbel.streamingserver.global.aws.dto.MultipartUploadRequestDto;
 import com.barbel.streamingserver.global.aws.dto.MultipartUploadResponseDto;
+import java.io.InputStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,7 +49,9 @@ public class S3Uploader {
 
   public MultipartInitResponseDto initMultipartUpload(String key) { // key는 업로드 파일 경로 + 이름
     InitiateMultipartUploadResult result =
-            amazonS3Client.initiateMultipartUpload(new InitiateMultipartUploadRequest(bucket, key));
+            amazonS3Client.initiateMultipartUpload(new InitiateMultipartUploadRequest(bucket, key)
+                .withCannedACL(CannedAccessControlList.PublicRead)
+                .withObjectMetadata(getObjectMetadata(key)));
     return new MultipartInitResponseDto(
             result.getUploadId(),
             amazonS3Client.getUrl(bucket, key).toString()
@@ -59,15 +63,17 @@ public class S3Uploader {
       String key,
       MultipartFile file) {
     try {
+      InputStream fileInputStream = file.getInputStream();
       UploadPartResult result = amazonS3Client.uploadPart(
           new UploadPartRequest()
               .withBucketName(bucket)
               .withUploadId(multipartUploadRequestDto.getUploadId())
               .withKey(key)
               .withPartNumber(multipartUploadRequestDto.getMultipartIndex())
-              .withInputStream(file.getInputStream())
+              .withInputStream(fileInputStream)
               .withPartSize(file.getSize())
       );
+      fileInputStream.close();
       return new MultipartUploadResponseDto(
           result.getPartETag()
       );
@@ -136,6 +142,13 @@ public class S3Uploader {
     } catch (IOException e) {
       throw new IllegalArgumentException("MultipartFile -> File convert fail", e);
     }
+  }
+
+  private ObjectMetadata getObjectMetadata(String fileName) {
+    String type = fileName.substring(fileName.lastIndexOf(".") + 1);
+    ObjectMetadata objectMetadata = new ObjectMetadata();
+    objectMetadata.setContentType("video/" + type);
+    return objectMetadata;
   }
 
   private void deleteS3(String fileName) {
