@@ -45,7 +45,7 @@ public class VODService {
     ) {
         log.info("동영상 파일 업로드 초기화 시작");
         String thumbURL = s3Uploader.uploadImage(thumbnail, S3_DIR_NAME+vodRegistrationRequestDto.getVODGroupId()+"/thumbnail");
-        String key = S3_DIR_NAME+vodRegistrationRequestDto.getVODGroupId();
+        String key = S3_DIR_NAME+vodRegistrationRequestDto.getVODGroupId()+"/"+vodRegistrationRequestDto.getTitle();
         MultipartInitResponseDto multipartInitResponseDto = s3Uploader.initMultipartUpload(key);
         String[] vodInfo = vodRegistrationRequestDto.getTitle().split(".");
         VOD vod = new VOD(
@@ -63,6 +63,7 @@ public class VODService {
         List<VOD> vodList = vodGroup.getVODList();
         vodList.add(vod);
         vodGroup.setVODList(vodList);
+        vodGroup.setVodCount(vodGroup.getVodCount()+1);
         vodGroupRepository.save(vodGroup);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.VOD_REGISTRATION_INIT_SUCCESS, multipartInitResponseDto.getUploadId()));
     }
