@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface VODGroupRepository extends MongoRepository<VODGroup, String> {
   List<VODGroup> findAllByOwnerId(String ownerId);
+  List<VODGroup> findAllByKeyword(String keyword);
 }
