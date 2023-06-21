@@ -22,4 +22,5 @@ public class VODGroup {
   private int vodCount;      // VOD 그룹에 포함된 VOD 갯수
   private String thumbnailURL; // 썸네일 이미지 URL
   private List<VOD> VODList;   // VOD 리스트
+  private String keyword;       // 검색 키워드
 }
