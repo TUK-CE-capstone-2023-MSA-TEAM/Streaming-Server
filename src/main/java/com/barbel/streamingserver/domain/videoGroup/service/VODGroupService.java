@@ -45,6 +45,7 @@ public class VODGroupService {
         .vodCount(0)
         .VODList(new ArrayList<>())
         .thumbnailURL(thumbnailURL)
+        .keyword(vodGroupRegistrationRequestDto.getKeyword())
         .build();
     vodGroupRepository.save(vodGroup);
     return ResponseEntity.ok(ResultResponse.of(ResultCode.VODGROUP_REGISTRATION_SUCCESS));
@@ -81,6 +82,7 @@ public class VODGroupService {
             .vodGroupName(vodGroup.getVodGroupName())
             .thumbnailURL(vodGroup.getThumbnailURL())
             .vodCount(vodGroup.getVodCount())
+            .keyword(vodGroup.getKeyword())
             .build()
     ).collect(Collectors.toList());
 
@@ -104,6 +106,7 @@ public class VODGroupService {
         .thumbnailURL(vodGroup.getThumbnailURL())
         .vodCount(vodGroup.getVodCount())
         .VODList(vodGroup.getVODList())
+        .keyword(vodGroup.getKeyword())
         .build();
     return ResponseEntity.ok(ResultResponse.of(ResultCode.VODGROUP_SEARCH_SUCCESS, result));
   }
@@ -121,6 +124,29 @@ public class VODGroupService {
             .vodGroupName(vodGroup.getVodGroupName())
             .thumbnailURL(vodGroup.getThumbnailURL())
             .vodCount(vodGroup.getVodCount())
+            .keyword(vodGroup.getKeyword())
+            .build()
+    ).collect(Collectors.toList());
+
+    return ResponseEntity.ok(ResultResponse.of(ResultCode.VODGROUP_SEARCH_SUCCESS, vodGroupList));
+  }
+
+  /**
+   * @param keyword
+   * @return ResponseEntity<ResultResponse>
+   * @description VOD 그룹 키워드 검색 서비스
+   * @since 2023. 06. 21.
+   */
+  public ResponseEntity<ResultResponse> searchVODGroupByKeyword(
+      String keyword
+  ) {
+    List<VODGroupInfoResponseDto> vodGroupList = vodGroupRepository.findAllByKeyword(keyword).stream().map(
+        vodGroup -> VODGroupInfoResponseDto.builder()
+            .id(vodGroup.get_id())
+            .vodGroupName(vodGroup.getVodGroupName())
+            .thumbnailURL(vodGroup.getThumbnailURL())
+            .vodCount(vodGroup.getVodCount())
+            .keyword(vodGroup.getKeyword())
             .build()
     ).collect(Collectors.toList());
 
