@@ -14,4 +14,5 @@ public class VODGroupDetailResponseDto {
   private String thumbnailURL;    // 썸네일 URL
   private int vodCount;          // VOD 개수
   private List<VOD> VODList;     // VOD 리스트
+  private String keyword;         // 검색 키워드
 }
