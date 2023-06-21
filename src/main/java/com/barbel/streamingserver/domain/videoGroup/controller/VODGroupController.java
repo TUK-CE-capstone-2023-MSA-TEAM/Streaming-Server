@@ -62,4 +62,11 @@ public class VODGroupController {
     return vodGroupService.updateVODGroupTitle(vodGroupNameUpdateRequestDto);
   }
 
+  @GetMapping("/{keyword}")
+  @Operation(summary = "VOD 그룹 키워드 검색")
+  public ResponseEntity<ResultResponse> searchVODGroupByKeyword(
+      @PathVariable("keyword") String keyword
+  ) {
+    return vodGroupService.searchVODGroupByKeyword(keyword);
+  }
 }
